@@ -1,0 +1,37 @@
+.vs/
+.idea/
+
+# CMake-generated files
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+x64/
+HeronTriangle.dir/
+test_fs_support_case_sensitivity
+
+# Visual Studio artifacts
+*.suo
+*.user
+*.userosscache
+*.VC.db
+*.VC.opendb
+*.vcxproj
+*.vcxproj.filters
+*.sln
+
+# Intermediate and object files
+*.obj
+*.pdb
+*.log
+*.idb
+*.ipch
+*.tmp
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# Working directory
+imgui.ini
