@@ -1,4 +1,6 @@
-﻿#include "renderer.h"
+﻿#include <iostream>
+
+#include "renderer.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -138,9 +140,9 @@ void Renderer::setup_circle() {
 
 void Renderer::draw_grid(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) {
   glUseProgram(shaderProgram);
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, &projection[0][0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, &view[0][0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+  glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, &projection[0][0]);
+  glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, &view[0][0]);
+  glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model));
 
 
   glBindVertexArray(gridVAO);
@@ -155,9 +157,9 @@ void Renderer::draw_circle(const glm::vec2& position, const float radius, const 
   model = glm::scale(model, glm::vec3(radius, radius, 1.0f));
 
   glUseProgram(shaderProgram);
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+  glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, glm::value_ptr(projection));
+  glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, glm::value_ptr(view));
+  glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model));
 
   glBindVertexArray(circleVAO);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 32);
@@ -168,20 +170,39 @@ void Renderer::draw_triangle(const Triangle& triangle, const glm::mat4& projecti
                              const glm::mat4& model) {
   glUseProgram(shaderProgram);
 
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, &projection[0][0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, &view[0][0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+  glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, &projection[0][0]);
+  glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, &view[0][0]);
+  glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model));
 
-  glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, 6 * sizeof(float), triangle.get_vertices().data());
+  if (triangle.is_update_needed()) {
+    update_triangle_buffer(triangle);
+  }
 
   glBindVertexArray(triangleVAO);
   glDrawArrays(GL_TRIANGLES, 0, 3);
   glBindVertexArray(0);
 }
 
+void Renderer::update_triangle_buffer(const Triangle& triangle) const {
+  glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, 6 * sizeof(float), triangle.get_vertices().data());
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 void Renderer::set_color(const glm::vec4& color) const {
   glUseProgram(shaderProgram);
-  const int color_location = glGetUniformLocation(shaderProgram, "u_color"); // TODO cache
+  const int color_location = get_uniform_location("u_color");
   glUniform4f(color_location, color[0], color[1], color[2], color[3]);
+}
+
+int Renderer::get_uniform_location(const std::string& name) const {
+  if (uniform_cache.contains(name)) {
+    return uniform_cache[name];
+  }
+  const int location = glGetUniformLocation(shaderProgram, name.c_str());
+  if (location == -1) {
+    std::cerr << "WARNING: Uniform '" << name << "' not found in shader program!\n";
+  }
+  uniform_cache[name] = location;
+  return location;
 }
