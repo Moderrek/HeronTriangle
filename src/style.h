@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <imgui.h>
+#include <resources/robot_font.hpp>
 
 void setup_im_gui_style() {
     ImGuiStyle& style = ImGui::GetStyle();
@@ -57,12 +58,15 @@ void setup_im_gui_style() {
     style.ScrollbarSize = 12.0f; 
 }
 
-
-
 void setup_im_gui_fonts() {
     const ImGuiIO& io = ImGui::GetIO();
 
-    io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto-Regular.ttf", 16.0f);
+    // io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto-Regular.ttf", 16.0f);
+  io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto-Regular.ttf", 16.0f);
+    // if (const ImFont* font = io.Fonts->AddFontFromMemoryTTF((void*)roboto_font, roboto_font_size, 16.0f); !font) {
+      // std::cerr << "ERROR: Failed to load font from memory\n";
+    // }
+    io.Fonts->Build();
 
     ImFontConfig config;
     config.OversampleH = 2;

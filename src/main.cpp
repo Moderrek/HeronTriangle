@@ -15,6 +15,7 @@
 #include <thread>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "Camera.h"
 #include "heron.h"
 #include "saves.h"
 #include "stb_image_write.h"
@@ -61,11 +62,11 @@ void limit_fps(int target_fps, bool unlock) {
     }
 
     last_frame_time = std::chrono::high_resolution_clock::now();
-  } else {
+  }
+  else {
     last_frame_time = std::chrono::high_resolution_clock::now(); // Reset bez limitu
   }
 }
-
 
 
 glm::vec2 snap_to_grid(const glm::vec2& position) {
@@ -87,26 +88,23 @@ glm::vec2 snap_to_grid(const glm::vec2& position) {
 
 int window_width = 1000, window_height = 800;
 
-float zoom = 0.5f;
-
-glm::vec2 camera_pos(0.0f, 0.0f);
-
-glm::vec2 mouseWorldPos;
-
-
 bool isRightMousePressed = false;
 double lastMouseX, lastMouseY;
 
 bool dragging_vertex = false;
 int selected_vertex = -1;
 
-static glm::vec2 screen_to_world(const double mouse_x, const double mouse_y) {
-  const double ndc_x = 2.0f * mouse_x / window_width - 1.0f;
-  const double ndc_y = 1.0f - (2.0f * mouse_y) / window_height;
+static glm::vec2 screen_to_world(const Camera& cam, const glm::vec2& window_size, const glm::vec2& mouse_pos) {
+  const glm::vec2& cam_pos = cam.get_position();
+  const float zoom = cam.get_zoom();
 
-  const double world_x = ndc_x * (10.0f * zoom) * (static_cast<float>(window_width) / static_cast<float>(window_height))
-    + camera_pos.x;
-  const double world_y = ndc_y * (10.0f * zoom) + camera_pos.y;
+  const double ndc_x = 2.0f * mouse_pos.x / window_size.x - 1.0f;
+  const double ndc_y = 1.0f - (2.0f * mouse_pos.y) / window_size.y;
+
+  const double world_x = ndc_x * (10.0f * zoom) * (static_cast<float>(window_size.x) / static_cast<float>(window_size.
+      y))
+    + cam_pos.x;
+  const double world_y = ndc_y * (10.0f * zoom) + cam_pos.y;
 
   return {
     world_x,
@@ -120,36 +118,55 @@ void framebuffer_size_callback(GLFWwindow* window, const int width, const int he
   glViewport(0, 0, window_width, window_height);
 }
 
-void scroll_callback(GLFWwindow* window, [[maybe_unused]] double x_offset, const double y_offset) {
-  zoom -= y_offset * 0.1f;
-  zoom = std::max(zoom, 0.1f);
-  zoom = std::min(zoom, 10.0f);
-}
-
-void process_input(GLFWwindow* window) {
-  const float move_speed = 0.05f * zoom;
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera_pos.y += move_speed;
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera_pos.y -= move_speed;
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera_pos.x -= move_speed;
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera_pos.x += move_speed;
-}
+// void scroll_callback(GLFWwindow* window, [[maybe_unused]] double x_offset, const double y_offset) {
+//   zoom -= y_offset * 0.1f;
+//   zoom = std::max(zoom, 0.1f);
+//   zoom = std::min(zoom, 10.0f);
+// }
+//
+// void process_input(GLFWwindow* window) {
+//   const float move_speed = 0.05f * zoom;
+//   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera_pos.y += move_speed;
+//   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera_pos.y -= move_speed;
+//   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera_pos.x -= move_speed;
+//   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera_pos.x += move_speed;
+// }
 
 int main() {
-  if (!glfwInit()) return -1;
+  if (!glfwInit()) {
+    std::cerr << "FATAL: Failed to initialize GLFW\n";
+    return -1;
+  }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow* window = glfwCreateWindow(window_width, window_height, "Wzor Herona - Tymon Wozniak 3TP", nullptr,
+  std::cout << "INFO: Initialized GLFW\n";
+
+  GLFWwindow* window = glfwCreateWindow(window_width, window_height, "Heron Triangle Visualizer", nullptr,
                                         nullptr);
-  if (!window) return -1;
+  if (!window) {
+    std::cerr << "FATAL: Failed to open GLFW window.\n";
+    return -1;
+  }
+
+  std::cout << "INFO: Created GLFW Window\n";
 
   glfwMakeContextCurrent(window);
 
-  if (glewInit() != GLEW_OK) return -1;
+  if (glewInit() != GLEW_OK) {
+    std::cerr << "FATAL: Failed to initialize GLEW\n";
+    return -1;
+  }
+  std::cout << "INFO: Initialized GLEW and OpenGL\n";
+
+  std::cout << "Drivers: OpenGL " << glGetString(GL_VERSION) << '\n';
+  std::cout << "Vendor: " << glGetString(GL_VENDOR) << '\n';
+  std::cout << "Renderer: " << glGetString(GL_RENDERER) << '\n';
+  std::cout << "GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << '\n';
+
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-  glfwSetScrollCallback(window, scroll_callback);
 
   glfwSwapInterval(0);
 
@@ -159,228 +176,258 @@ int main() {
   ImGui_ImplOpenGL3_Init("#version 330");
   setup_im_gui_style();
   setup_im_gui_fonts();
+  std::cout << "INFO: Created ImGui Context\n";
 
-  Triangle triangle(3.0f, 4.0f, 5.0f);
-  Renderer renderer;
-  renderer.init();
+  {
+    Triangle triangle(3.0f, 4.0f, 5.0f);
+    Renderer renderer;
+    renderer.init();
+    std::cout << "INFO: Initialized renderer\n";
 
-  auto background_color = glm::vec4(0.98f, 0.98f, 0.98f, 1.0f);
-  auto grid_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-  auto triangle_color = glm::vec4(0.0f, 0.16f, 1.0f, 1.0f);
-  auto triangle_vertex_color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-  auto triangle_vertex_selected_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec2 window_size = {window_width, window_height};
+    Camera camera{window_size, {0, 0}};
+    Camera::setup_scroll(window);
 
-  auto grid_model = glm::mat4(1.0f);
-  auto triangle_model = glm::mat4(1.0f);
+    auto background_color = glm::vec4(0.98f, 0.98f, 0.98f, 1.0f);
+    auto grid_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    auto triangle_color = glm::vec4(0.0f, 0.16f, 1.0f, 1.0f);
+    auto triangle_vertex_color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    auto triangle_vertex_selected_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
-  double previous_time = 0;
-  double current_time = 0;
-  double timer = 0;
-  double previous_time_delta = 0;
+    auto grid_model = glm::mat4(1.0f);
+    auto triangle_model = glm::mat4(1.0f);
+
+    double previous_time = 0;
+    double current_time = 0;
+    double timer = 0;
+    double previous_time_delta = 0;
+
+    bool want_vsync = true;
+    bool is_vsync = false;
+
+    HeronSteps steps = {3.0f, 4.0f, 5.0f};
+    steps.calculate();
+
+    std::cout << "INFO: Starting game loop\n";
+    while (!glfwWindowShouldClose(window)) {
+      // Calculate delta time
+      current_time = glfwGetTime();
+      timer = current_time - previous_time;
+      double delta_time = current_time - previous_time_delta;
+      previous_time_delta = current_time;
+
   
-  bool want_vsync = true;
-  bool is_vsync = false;
-  
-  HeronSteps steps = {3.0f, 4.0f, 5.0f};
-  steps.calculate();
-  
-  while (!glfwWindowShouldClose(window)) {
-    current_time = glfwGetTime();
-    timer = current_time - previous_time;
-    float delta_time = static_cast<float>(current_time) - static_cast<float>(previous_time_delta);
-    previous_time_delta = current_time;
-    
-    process_input(window);
+      camera.process_inputs(window, delta_time);
 
-    glClearColor(background_color.x, background_color.y, background_color.z, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+      double mouse_x, mouse_y;
+      glfwGetCursorPos(window, &mouse_x, &mouse_y);
+      glm::vec2 mouse_pos = {mouse_x, mouse_y};
+      glm::vec2 mouse_world_pos = screen_to_world(camera, window_size, mouse_pos);
 
-    double mouse_x, mouse_y;
-    glfwGetCursorPos(window, &mouse_x, &mouse_y);
-    glm::vec2 mouse_position = {mouse_x, mouse_y};
-    mouseWorldPos = screen_to_world(mouse_x, mouse_y);    
-
-    const float aspect_ratio = static_cast<float>(window_width) / static_cast<float>(window_height);
-    glm::mat4 projection = glm::ortho(-10.0f * zoom * aspect_ratio, 10.0f * zoom * aspect_ratio, -10.0f * zoom,
-                                      10.0f * zoom, -1.0f, 1.0f);
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-camera_pos, 0.0f));
+      const float aspect_ratio = static_cast<float>(window_width) / static_cast<float>(window_height);
 
 
-    if (want_vsync && !is_vsync) {
-      glfwSwapInterval(1);
-    } else if (!want_vsync && is_vsync) {
-      glfwSwapInterval(0);
-    }
+      if (want_vsync && !is_vsync) {
+        std::cout << "INFO: Enabled V-Sync\n";
+        glfwSwapInterval(1);
+        is_vsync = true;
+      }
+      if (!want_vsync && is_vsync) {
+        std::cout << "INFO: Disabled V-Sync\n";
+        glfwSwapInterval(0);
+        is_vsync = false;
+      }
 
-    {
-      if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+      {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+          if (!isRightMousePressed) {
+            isRightMousePressed = true;
+            lastMouseX = mouse_pos.x;
+            lastMouseY = mouse_pos.y;
+          }
+          else {
+            double delta_x = mouse_pos.x - lastMouseX;
+            double delta_y = mouse_pos.y - lastMouseY;
 
-        if (!isRightMousePressed) {
-          isRightMousePressed = true;
-          lastMouseX = mouse_position.x;
-          lastMouseY = mouse_position.y;
+            glm::vec2 cam_pos = camera.get_position();
+            const float cam_zoom = camera.get_zoom();
+
+            cam_pos.x -= static_cast<float>(delta_x) * cam_zoom * aspect_ratio / static_cast<float>(window_width) *
+              20.0f;
+            cam_pos.y += static_cast<float>(delta_y) * cam_zoom / static_cast<float>(window_height) * 20.0f;
+
+            camera.set_position(cam_pos);
+            camera.update_matrix({window_width, window_height});
+
+            lastMouseX = mouse_pos.x;
+            lastMouseY = mouse_pos.y;
+          }
         }
         else {
-          double delta_x = mouse_position.x - lastMouseX;
-          double delta_y = mouse_position.y - lastMouseY;
-
-          camera_pos.x -= static_cast<float>(delta_x) * zoom * aspect_ratio / static_cast<float>(window_width) * 20.0f;
-          camera_pos.y += static_cast<float>(delta_y) * zoom / static_cast<float>(window_height) * 20.0f;
-
-          lastMouseX = mouse_position.x;
-          lastMouseY = mouse_position.y;
+          isRightMousePressed = false;
         }
       }
-      else {
-        isRightMousePressed = false;
-      }
-    }
 
 
-    
-    {
-      if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        if (!dragging_vertex) {
-          for (int i = 0; i < 3; ++i) {
-            if (distance_squared(mouseWorldPos, triangle.get_vertices()[i]) < 0.09f) {
-              dragging_vertex = true;
-              selected_vertex = i;
-              break;
+      {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+          if (!dragging_vertex) {
+            for (int i = 0; i < 3; ++i) {
+              if (distance_squared(mouse_world_pos, triangle.get_vertices()[i]) < 0.09f) {
+                dragging_vertex = true;
+                selected_vertex = i;
+                break;
+              }
             }
           }
-        } else if (selected_vertex != -1) {
-          if (glm::vec2 snapped_pos = snap_to_grid(mouseWorldPos); snapped_pos != triangle.get_vertices()[selected_vertex]) {
-            triangle.move_vertex(selected_vertex, snapped_pos);
+          else if (selected_vertex != -1) {
+            if (glm::vec2 snapped_pos = snap_to_grid(mouse_world_pos); snapped_pos != triangle.get_vertices()[
+              selected_vertex]) {
+              triangle.move_vertex(selected_vertex, snapped_pos);
+            }
           }
         }
-      }
-      else if (dragging_vertex) {
-        dragging_vertex = false;
-        selected_vertex = -1;
-      }
-    }
-
-    renderer.set_color(grid_color);
-    renderer.draw_grid(projection, view, grid_model);
-
-    renderer.set_color(triangle_color);
-    renderer.draw_triangle(triangle, projection, view, triangle_model);
-
-    for (int i = 0; i < 3; ++i) {
-      bool selected = dragging_vertex && i == selected_vertex;
-      renderer.set_color(selected ? triangle_vertex_selected_color : triangle_vertex_color);
-      renderer.draw_circle(triangle.get_vertices()[i], 0.15f, projection, view);
-    }
-
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-    bool saveScreenshot = false;
-    bool saveScene = false;
-    bool loadScene = false;
-    if (ImGui::BeginMainMenuBar()) {
-      if (ImGui::BeginMenu("Plik")) {
-        if (ImGui::MenuItem("Zapisz zrzut ekranu", "Ctrl+S")) {
-          saveScreenshot = true;
+        else if (dragging_vertex) {
+          dragging_vertex = false;
+          selected_vertex = -1;
         }
-        if (ImGui::MenuItem("Zapisz scene", "Ctrl+Shift+S")) {
-          saveScene = true;
+      }
+
+      // Rendering
+      glClearColor(background_color.x, background_color.y, background_color.z, 1.0f);
+      glClear(GL_COLOR_BUFFER_BIT);
+
+      renderer.set_color(grid_color);
+      renderer.draw_grid(camera.get_projection(), camera.get_view(), grid_model);
+
+      renderer.set_color(triangle_color);
+      renderer.draw_triangle(triangle, camera.get_projection(), camera.get_view(), triangle_model);
+
+      for (int i = 0; i < 3; ++i) {
+        bool selected = dragging_vertex && i == selected_vertex;
+        renderer.set_color(selected ? triangle_vertex_selected_color : triangle_vertex_color);
+        renderer.draw_circle(triangle.get_vertices()[i], 0.15f, camera.get_projection(), camera.get_view());
+      }
+
+      ImGui_ImplOpenGL3_NewFrame();
+      ImGui_ImplGlfw_NewFrame();
+      ImGui::NewFrame();
+
+      bool save_screenshot = false;
+      bool save_scene = false;
+      bool load_scene = false;
+      bool exit = false;
+      if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+          if (ImGui::MenuItem("Save screenshot", "Ctrl+S")) {
+            save_screenshot = true;
+          }
+          if (ImGui::MenuItem("Save scene", "Ctrl+Shift+S")) {
+            save_scene = true;
+          }
+          if (ImGui::MenuItem("Load scene", "Ctrl+O")) {
+            load_scene = true;
+          }
+          if (ImGui::MenuItem("Exit", "Alt+F4")) {
+            exit = true;
+          }
+          ImGui::EndMenu();
         }
-        if (ImGui::MenuItem("Wczytaj scene", "Ctrl+O")) {
-          loadScene = true;
+        ImGui::EndMainMenuBar();
+      }
+
+      if (save_screenshot) {
+        save_framebuffer_to_image("screenshot.png", window_width, window_height);
+        save_screenshot = false;
+        std::cout << "INFO: Saved screenshot as screenshot.png\n";
+      }
+
+      if (save_scene) {
+        save_scene_to_file("scene.json", triangle, triangle_color);
+        save_scene = false;
+        std::cout << "INFO: Saved scene to scene.json\n";
+      }
+
+      if (load_scene) {
+        load_scene_from_file("scene.json", triangle, triangle_color);
+        load_scene = false;
+        std::cout << "INFO: Loaded scene from scene.json\n";
+      }
+
+      if (exit) {
+        exit = false;
+        std::cout << "INFO: Exiting\n";
+        glfwSetWindowShouldClose(window, true);
+      }
+
+      auto sides = triangle.get_sides();
+
+      {
+        ImGui::Begin("Properties");
+        ImGui::InputFloat("Side A", &sides[0], 0.1f, 1.0f, "%.2f");
+        ImGui::InputFloat("Side B", &sides[1], 0.1f, 1.0f, "%.2f");
+        ImGui::InputFloat("Side C", &sides[2], 0.1f, 1.0f, "%.2f");
+        ImGui::Separator();
+        ImGui::Text("Triangle Area: %.2f", triangle.get_area());
+        ImGui::Separator();
+        for (auto vertex : triangle.get_vertices()) {
+          ImGui::Text("(%.2f %.2f)", vertex.x, vertex.y);
         }
-        ImGui::EndMenu();
-      }
-      ImGui::EndMainMenuBar();
-    }
-    
-    if (saveScreenshot) {
-      save_framebuffer_to_image("screenshot.png", window_width, window_height);
-      saveScreenshot = false;
-      std::cout << "INFO: Saved screenshot as screenshot.png\n";
-    }
-    
-    if (saveScene) {
-      save_scene_to_file("scene.json", triangle, triangle_color);
-      saveScene = false;
-      std::cout << "INFO: Saved scene to scene.json\n";
-    }
+        ImGui::End();
+      } // ImGui Properties
 
-    if (loadScene) {
-      load_scene_from_file("scene.json", triangle, triangle_color);
-      loadScene = false;
-      std::cout << "INFO: Loaded scene from scene.json\n" ;
-    }
+      render_heron_steps_panel(steps);
 
-    auto sides = triangle.get_sides();
+      {
+        ImGui::Begin("Colors");
+        ImGui::ColorEdit4("Background", glm::value_ptr(background_color));
+        ImGui::ColorEdit4("Grid", glm::value_ptr(grid_color));
+        ImGui::ColorEdit4("Triangle", glm::value_ptr(triangle_color));
+        ImGui::ColorEdit4("Vertex", glm::value_ptr(triangle_vertex_color));
+        ImGui::ColorEdit4("Selected Vertex", glm::value_ptr(triangle_vertex_selected_color));
+        ImGui::End();
+      } // ImGui Colors
 
-    {
-      ImGui::Begin("Wlasciwosci");
-      ImGui::InputFloat("Bok A", &sides[0], 0.1f, 1.0f, "%.2f");
-      ImGui::InputFloat("Bok B", &sides[1], 0.1f, 1.0f, "%.2f");
-      ImGui::InputFloat("Bok C", &sides[2], 0.1f, 1.0f, "%.2f");
-      ImGui::Separator();
-      ImGui::Text("Pole trojkata: %.2f", triangle.get_area());
-      ImGui::Separator();
-      for (auto vertex : triangle.get_vertices()) {
-        ImGui::Text("(%.2f %.2f)", vertex.x, vertex.y);
-      }
-      ImGui::End();
-    }
- 
-    render_heron_steps_panel(steps);
+      {
+        ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
 
-    {
-      ImGui::Begin("Kolory");
-      ImGui::ColorEdit4("Tlo", glm::value_ptr(background_color));
-      ImGui::ColorEdit4("Siatka", glm::value_ptr(grid_color));
-      ImGui::ColorEdit4("Trojkat", glm::value_ptr(triangle_color));
-      ImGui::ColorEdit4("Wierzcholek", glm::value_ptr(triangle_vertex_color));
-      ImGui::ColorEdit4("Wybrany wierzcholek", glm::value_ptr(triangle_vertex_selected_color));
-      ImGui::End();
-    }
-    
-    {
-      ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_NoResize  | ImGuiWindowFlags_AlwaysAutoResize);
-      
-      ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-      ImGui::Text("Frame Time: %.2f", delta_time);
-      
-      ImGui::Separator();
-      
-      ImGui::Text("Drivers: %s", glGetString(GL_VERSION));
-      ImGui::Text("Shader: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-      
-      ImGui::Separator();
-      
-      ImGui::Checkbox("VSync", &is_vsync);
-      ImGui::Checkbox("Unlock FPS", &unlock_fps);
-      if (!unlock_fps) {
-        ImGui::SliderInt("Max FPS", &max_fps, 15, 240);
-        ImGui::Text("Target FPS: %d", max_fps);
-      } else {
-        ImGui::Text("Target FPS: Unlimited");
-      }
-      
-      ImGui::End();
-    }
+        ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+        ImGui::Text("Frame Time: %.2f", delta_time);
 
-    {
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
+        ImGui::Separator();
 
-    glfwSwapBuffers(window);
-    glfwPollEvents();     
-    
-    if (!unlock_fps) limit_fps(max_fps, unlock_fps);
-  }
+        ImGui::Checkbox("VSync", &want_vsync);
+        ImGui::Checkbox("Unlock FPS", &unlock_fps);
+        if (!unlock_fps) {
+          ImGui::SliderInt("Max FPS", &max_fps, 15, 240);
+          ImGui::Text("Target FPS: %d", max_fps);
+        }
+        else {
+          ImGui::Text("Target FPS: Unlimited");
+        }
+
+        ImGui::End();
+      } // ImGui Debug
+
+
+      ImGui::Render();
+      ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
+      glfwSwapBuffers(window);
+      glfwPollEvents();
+
+      if (!unlock_fps) limit_fps(max_fps, unlock_fps);
+    } // end of game loop
+
+    std::cout << "INFO: Cleaning up...\n";
+  } // end of renderer
 
   // Cleanup
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
-  ImGui::DestroyContext();
+  if (ImGui::GetCurrentContext() != nullptr) ImGui::DestroyContext();
   glfwTerminate();
-  return 0;
+  std::cout << "INFO: Successfully cleaned up\n";
+  return EXIT_SUCCESS;
 }

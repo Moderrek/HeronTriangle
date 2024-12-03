@@ -16,11 +16,11 @@ Renderer::Renderer() : gridVAO(0), gridVBO(0), triangleVAO(0), triangleVBO(0), c
                        shaderProgram(0) {}
 
 Renderer::~Renderer() {
-  glDeleteVertexArrays(1, &gridVAO);
-  glDeleteBuffers(1, &gridVBO);
-  glDeleteVertexArrays(1, &triangleVAO);
-  glDeleteBuffers(1, &triangleVBO);
-  glDeleteProgram(shaderProgram);
+  GLCall(glDeleteVertexArrays(1, &gridVAO));
+  GLCall(glDeleteBuffers(1, &gridVBO));
+  GLCall(glDeleteVertexArrays(1, &triangleVAO));
+  GLCall(glDeleteBuffers(1, &triangleVBO));
+  GLCall(glDeleteProgram(shaderProgram));
 }
 
 void Renderer::init() {
@@ -54,27 +54,27 @@ void Renderer::load_shaders() {
         }
     )";
 
-  unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-  glCompileShader(vertexShader);
+  GLCall(unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER));
+  GLCall(glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr));
+  GLCall(glCompileShader(vertexShader));
 
-  unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-  glCompileShader(fragmentShader);
+  GLCall(unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER));
+  GLCall(glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr));
+  GLCall(glCompileShader(fragmentShader));
 
-  shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glLinkProgram(shaderProgram);
+  GLCall(shaderProgram = glCreateProgram());
+  GLCall(glAttachShader(shaderProgram, vertexShader));
+  GLCall(glAttachShader(shaderProgram, fragmentShader));
+  GLCall(glLinkProgram(shaderProgram));
 
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
+  GLCall(glDeleteShader(vertexShader));
+  GLCall(glDeleteShader(fragmentShader));
 }
 
 void Renderer::setup_grid() {
   std::vector<float> grid_lines;
 
-  for (float i = -20.0f; i <= 20.0f; i++) {
+  for (int i = -20; i <= 20; i++) {
     grid_lines.push_back(i); // x1
     grid_lines.push_back(-20.0f); // y1
     grid_lines.push_back(i); // x2
@@ -86,34 +86,34 @@ void Renderer::setup_grid() {
     grid_lines.push_back(i); // y2
   }
 
-  glGenVertexArrays(1, &gridVAO);
-  glGenBuffers(1, &gridVBO);
+  GLCall(glGenVertexArrays(1, &gridVAO));
+  GLCall(glGenBuffers(1, &gridVBO));
 
-  glBindVertexArray(gridVAO);
-  glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
-  glBufferData(GL_ARRAY_BUFFER, grid_lines.size() * sizeof(float), grid_lines.data(), GL_STATIC_DRAW);
+  GLCall(glBindVertexArray(gridVAO));
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, gridVBO));
+  GLCall(glBufferData(GL_ARRAY_BUFFER, grid_lines.size() * sizeof(float), grid_lines.data(), GL_STATIC_DRAW));
 
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(0);
+  GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0));
+  GLCall(glEnableVertexAttribArray(0));
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+  GLCall(glBindVertexArray(0));
 }
 
 void Renderer::setup_triangle() {
-  glGenVertexArrays(1, &triangleVAO);
-  glGenBuffers(1, &triangleVBO);
+  GLCall(glGenVertexArrays(1, &triangleVAO));
+  GLCall(glGenBuffers(1, &triangleVBO));
 
-  glBindVertexArray(triangleVAO);
-  glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+  GLCall(glBindVertexArray(triangleVAO));
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, triangleVBO));
 
-  glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+  GLCall(glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), nullptr, GL_DYNAMIC_DRAW));
 
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(0);
+  GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0));
+  GLCall(glEnableVertexAttribArray(0));
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+  GLCall(glBindVertexArray(0));
 }
 
 void Renderer::setup_circle() {
@@ -124,30 +124,30 @@ void Renderer::setup_circle() {
     circle_vertices.emplace_back(cos(theta), sin(theta));
   }
 
-  glGenVertexArrays(1, &circleVAO);
-  glGenBuffers(1, &circleVBO);
+  GLCall(glGenVertexArrays(1, &circleVAO));
+  GLCall(glGenBuffers(1, &circleVBO));
 
-  glBindVertexArray(circleVAO);
-  glBindBuffer(GL_ARRAY_BUFFER, circleVBO);
-  glBufferData(GL_ARRAY_BUFFER, circle_vertices.size() * sizeof(glm::vec2), circle_vertices.data(), GL_STATIC_DRAW);
+  GLCall(glBindVertexArray(circleVAO));
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, circleVBO));
+  GLCall(glBufferData(GL_ARRAY_BUFFER, circle_vertices.size() * sizeof(glm::vec2), circle_vertices.data(), GL_STATIC_DRAW));
 
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
-  glEnableVertexAttribArray(0);
+  GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0));
+  GLCall(glEnableVertexAttribArray(0));
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+  GLCall(glBindVertexArray(0));
 }
 
-void Renderer::draw_grid(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) {
-  glUseProgram(shaderProgram);
-  glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, &projection[0][0]);
-  glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, &view[0][0]);
-  glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model));
+void Renderer::draw_grid(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const {
+  GLCall(glUseProgram(shaderProgram));
+  GLCall(glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, &projection[0][0]));
+  GLCall(glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, &view[0][0]));
+  GLCall(glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model)));
 
 
-  glBindVertexArray(gridVAO);
-  glDrawArrays(GL_LINES, 0, (20 - (-20) + 1) * 4);
-  glBindVertexArray(0);
+  GLCall(glBindVertexArray(gridVAO));
+  GLCall(glDrawArrays(GL_LINES, 0, (20 - (-20) + 1) * 4));
+  GLCall(glBindVertexArray(0));
 }
 
 void Renderer::draw_circle(const glm::vec2& position, const float radius, const glm::mat4& projection,
@@ -156,42 +156,42 @@ void Renderer::draw_circle(const glm::vec2& position, const float radius, const 
   model = glm::translate(model, glm::vec3(position, 0.0f));
   model = glm::scale(model, glm::vec3(radius, radius, 1.0f));
 
-  glUseProgram(shaderProgram);
-  glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, glm::value_ptr(projection));
-  glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, glm::value_ptr(view));
-  glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model));
+  GLCall(glUseProgram(shaderProgram));
+  GLCall(glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, glm::value_ptr(projection)));
+  GLCall(glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, glm::value_ptr(view)));
+  GLCall(glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model)));
 
-  glBindVertexArray(circleVAO);
-  glDrawArrays(GL_TRIANGLE_FAN, 0, 32);
-  glBindVertexArray(0);
+  GLCall(glBindVertexArray(circleVAO));
+  GLCall(glDrawArrays(GL_TRIANGLE_FAN, 0, 32));
+  GLCall(glBindVertexArray(0));
 }
 
 void Renderer::draw_triangle(const Triangle& triangle, const glm::mat4& projection, const glm::mat4& view,
-                             const glm::mat4& model) {
-  glUseProgram(shaderProgram);
+                             const glm::mat4& model) const {
+  GLCall(glUseProgram(shaderProgram));
 
-  glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, &projection[0][0]);
-  glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, &view[0][0]);
-  glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model));
+  GLCall(glUniformMatrix4fv(get_uniform_location("projection"), 1, GL_FALSE, &projection[0][0]));
+  GLCall(glUniformMatrix4fv(get_uniform_location("view"), 1, GL_FALSE, &view[0][0]));
+  GLCall(glUniformMatrix4fv(get_uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model)));
 
   if (triangle.is_update_needed()) {
     update_triangle_buffer(triangle);
   }
 
-  glBindVertexArray(triangleVAO);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
-  glBindVertexArray(0);
+  GLCall(glBindVertexArray(triangleVAO));
+  GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+  GLCall(glBindVertexArray(0));
 }
 
 void Renderer::update_triangle_buffer(const Triangle& triangle) const {
-  glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, 6 * sizeof(float), triangle.get_vertices().data());
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, triangleVBO));
+  GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, 6 * sizeof(float), triangle.get_vertices().data()));
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 void Renderer::set_color(const glm::vec4& color) const {
   glUseProgram(shaderProgram);
-  const int color_location = get_uniform_location("u_color");
+  GLCall(const int color_location = get_uniform_location("u_color"));
   glUniform4f(color_location, color[0], color[1], color[2], color[3]);
 }
 
@@ -199,10 +199,22 @@ int Renderer::get_uniform_location(const std::string& name) const {
   if (uniform_cache.contains(name)) {
     return uniform_cache[name];
   }
-  const int location = glGetUniformLocation(shaderProgram, name.c_str());
+  GLCall(const int location = glGetUniformLocation(shaderProgram, name.c_str()));
   if (location == -1) {
     std::cerr << "WARNING: Uniform '" << name << "' not found in shader program!\n";
   }
   uniform_cache[name] = location;
   return location;
+}
+
+void Renderer::GLClearErrors() {
+  while (glGetError() != GL_NO_ERROR);
+}
+
+bool Renderer::GLCheckError(const char* function, const char* file, int line) {
+  while (GLenum error = glGetError()) {
+    std::cout << "[OpenGL] ERROR: (0x" << std::hex << error << ") " << std::dec << function << " " << file << ":" << line << '\n';
+    return false;
+  }
+  return true;
 }

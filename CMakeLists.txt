@@ -83,6 +83,6 @@ target_link_libraries(HeronTriangle PRIVATE glfw libglew_static OpenGL::GL)
 add_custom_command(
         TARGET HeronTriangle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:HeronTriangle>/assets
+        ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:HeronTriangle>/assets
         COMMENT "Copy assets to build directory."
 )
