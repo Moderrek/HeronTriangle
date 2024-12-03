@@ -1,5 +1,7 @@
 # Heron Triangle
 
+![image](https://github.com/user-attachments/assets/47fd1bd0-f616-455a-8e7c-dd6056ac430c)
+
 ## How to Compile
 
 ### Requirements
