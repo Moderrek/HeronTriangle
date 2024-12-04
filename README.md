@@ -14,8 +14,8 @@
 
 1. Clone the repository with submodules:
    ```bash
-   git clone --recursive https://github.com/Moderrek/SolarSystem.git
-   cd SolarSystem
+   git clone --recursive https://github.com/Moderrek/HeronTriangle.git
+   cd HeronTriangle
    ```
 
 3. Configure the project using **CMake**:
