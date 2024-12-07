@@ -1,13 +1,13 @@
 ﻿#include <iostream>
 
-#include "renderer.h"
+#include "Renderer.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <vector>
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
