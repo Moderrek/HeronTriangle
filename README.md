@@ -4,10 +4,13 @@
 ![Windows](https://img.shields.io/badge/Platform-Windows-blue?logo=windows)
 ![OpenGL](https://img.shields.io/badge/Graphics-OpenGL-green?logo=opengl)
 ![MIT License](https://img.shields.io/badge/License-MIT-yellow?logo=opensourceinitiative)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Moderrek/HeronTriangle/total)
 
 [Heron's Formula](https://en.wikipedia.org/wiki/Heron%27s_formula) is a method for calculating the **area** of a [triangle](https://en.wikipedia.org/wiki/Triangle) when the lengths of all three sides are known. This formula is attributed to **Heron of Alexandria**.
 
+
 [**Download Heron Triangle Visualizer (Linux, Windows) HERE**](https://github.com/Moderrek/HeronTriangle/releases)
+
 
 ![image](https://github.com/user-attachments/assets/98017984-4fcb-499d-aae1-badc98fa7711)
 
