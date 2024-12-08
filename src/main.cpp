@@ -19,34 +19,8 @@
 #include "Saves.hpp"
 #include "Screenshot.hpp"
 
-const int TARGET_FPS = 60;
-const int FRAME_TIME = 1000 / TARGET_FPS;
-
 constexpr float grid_size = 1.0f;
 constexpr float snap_threshold = 0.2f;
-
-int max_fps = 60;
-bool unlock_fps = true;
-
-void limit_fps(int target_fps, bool unlock) {
-  static auto last_frame_time = std::chrono::high_resolution_clock::now();
-
-  if (!unlock) {
-    int frame_time_ms = 1000 / target_fps;
-    auto current_time = std::chrono::high_resolution_clock::now();
-    auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_frame_time).count();
-
-    if (elapsed_time < frame_time_ms) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(frame_time_ms - elapsed_time));
-    }
-
-    last_frame_time = std::chrono::high_resolution_clock::now();
-  }
-  else {
-    last_frame_time = std::chrono::high_resolution_clock::now();
-  }
-}
-
 
 glm::vec2 snap_to_grid(const glm::vec2& position) {
   glm::vec2 snapped_position = position;
@@ -367,14 +341,6 @@ int main() {
         ImGui::Separator();
 
         ImGui::Checkbox("VSync", &want_vsync);
-        ImGui::Checkbox("Unlock FPS", &unlock_fps);
-        if (!unlock_fps) {
-          ImGui::SliderInt("Max FPS", &max_fps, 15, 240);
-          ImGui::Text("Target FPS: %d", max_fps);
-        }
-        else {
-          ImGui::Text("Target FPS: Unlimited");
-        }
 
         ImGui::End();
       } // ImGui Debug
@@ -386,8 +352,6 @@ int main() {
 
       glfwSwapBuffers(window);
       glfwPollEvents();
-
-      if (!unlock_fps) limit_fps(max_fps, unlock_fps);
     } // end of game loop
 
     std::cout << "INFO: Cleaning up...\n";
