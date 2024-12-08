@@ -1,22 +1,14 @@
 ﻿#ifndef RENDERER_HPP_INCLUDED
 #define RENDERER_HPP_INCLUDED 1
 
+#include "Base.hpp" // assert, debugbreak
+
 #include <string>
 
 #include "Triangle.hpp"
 
 #include <glm/glm.hpp>
 #include <GL/glew.h>
-
-#ifdef HERON_PLATFORM_WINDOWS
-
-#define ASSERT(x) if (!(x)) __debugbreak()
-
-#else
-
-#define ASSERT(x) 
-
-#endif
 
 #define GLCall(x) Renderer::GLClearErrors();\
 x;\
