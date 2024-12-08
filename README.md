@@ -5,7 +5,7 @@
 ![OpenGL](https://img.shields.io/badge/Graphics-OpenGL-green?logo=opengl)
 ![MIT License](https://img.shields.io/badge/License-MIT-yellow?logo=opensourceinitiative)
 
-Heron's Formula is a method for calculating the **area** of a triangle when the lengths of all three sides are known. This formula is attributed to **Heron of Alexandria**.
+[Heron's Formula](https://en.wikipedia.org/wiki/Heron%27s_formula) is a method for calculating the **area** of a [triangle](https://en.wikipedia.org/wiki/Triangle) when the lengths of all three sides are known. This formula is attributed to **Heron of Alexandria**.
 
 [**Download Heron Triangle Visualizer (Linux, Windows) HERE**](https://github.com/Moderrek/HeronTriangle/releases)
 
@@ -15,7 +15,7 @@ Heron's Formula is a method for calculating the **area** of a triangle when the 
 
 ## Formula Overview
 
-Given the three side lengths of a triangle:
+Given the three side lengths of a [triangle](https://en.wikipedia.org/wiki/Triangle):
 
 - ***`a`*** = first side
 - ***`b`*** = second side
@@ -23,13 +23,13 @@ Given the three side lengths of a triangle:
 
 ### Step 1: Calculate the Semi-Perimeter ***`s`***
 
-The semi-perimeter is half the perimeter of the triangle and is calculated as:
+The [semi-perimeter](https://en.wikipedia.org/wiki/Semiperimeter) is half the [perimeter](https://en.wikipedia.org/wiki/Perimeter) of the [triangle](https://en.wikipedia.org/wiki/Triangle) and is calculated as:
 
 ```math
 s = \frac{a + b + c}{2}
 ```
 
-### Step 2: Calculate the Area ***`A`***
+### Step 2: Calculate the [Area](https://en.wikipedia.org/wiki/Area) ***`A`***
 
 The area of the triangle is determined using the following formula:
 
@@ -49,7 +49,7 @@ Let the sides of the triangle be:
 - `c = 7`
 
 ### Calculation:
-1. Compute the semi-perimeter:
+1. Compute the [semi-perimeter](https://en.wikipedia.org/wiki/Semiperimeter):
    ```math
    s = \frac{5 + 6 + 7}{2} = 9
    ```
@@ -69,10 +69,10 @@ The area of the triangle is approximately **14.7 square units**.
 
 ## Applications
 
-- Geometry and trigonometry problems
+- [Geometry](https://en.wikipedia.org/wiki/Geometry) and [trigonometry](https://en.wikipedia.org/wiki/Trigonometry) problems
 - Engineering and architecture
 - Computational graphics and simulations
-- Heron's Formula works for any triangle, as long as the sum of any two sides is greater than the third side (triangle inequality).
+- Heron's Formula works for any triangle, as long as the sum of any two sides is greater than the third side ([triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality)).
 
 To learn more about Heron's formula, [click here](https://en.wikipedia.org/wiki/Heron%27s_formula).
 
