@@ -8,14 +8,14 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include "Triangle.hpp"
-#include "Renderer.hpp"
-#include "ScopedTimer.hpp"
-#include "ImGuiStyle.hpp"
+#include "Renderer/Renderer.hpp"
+#include "Core/ScopedTimer.hpp"
+#include "ImGui/ImGuiStyle.hpp"
 #include <chrono>
 #include <thread>
 
-#include "Camera.hpp"
-#include "HeronPanel.hpp"
+#include "Renderer/Camera.hpp"
+#include "ImGui/HeronPanel.hpp"
 #include "Saves.hpp"
 #include "Screenshot.hpp"
 
@@ -47,7 +47,7 @@ double lastMouseX, lastMouseY;
 bool dragging_vertex = false;
 int selected_vertex = -1;
 
-static glm::vec2 screen_to_world(const Camera& cam, const glm::vec2& window_size, const glm::vec2& mouse_pos) {
+static glm::vec2 screen_to_world(const Heron::Camera2D& cam, const glm::vec2& window_size, const glm::vec2& mouse_pos) {
   const glm::vec2& cam_pos = cam.get_position();
   const float zoom = cam.get_zoom();
 
@@ -128,8 +128,8 @@ int main() {
     std::cout << "INFO: Initialized renderer\n";
 
     glm::vec2 window_size = {window_width, window_height};
-    Camera camera{window_size, {0, 0}};
-    Camera::setup_scroll(window);
+    Heron::Camera2D camera{window_size, {0, 0}};
+    Heron::Camera2D::setup_scroll(window);
 
     auto background_color = glm::vec4(0.98f, 0.98f, 0.98f, 1.0f);
     auto grid_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);

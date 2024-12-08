@@ -1,11 +1,11 @@
 ﻿#ifndef RENDERER_HPP_INCLUDED
 #define RENDERER_HPP_INCLUDED 1
 
-#include "Base.hpp" // assert, debugbreak
+#include "../Base.hpp" // assert, debugbreak
 
 #include <string>
 
-#include "Triangle.hpp"
+#include "../Triangle.hpp"
 
 #include <glm/glm.hpp>
 #include <GL/glew.h>
@@ -21,6 +21,8 @@ public:
   ~Renderer();
   
   void init();
+  void shutdown();
+
   void draw_grid(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const;
   void draw_circle(const glm::vec2& position, float radius, const glm::mat4& projection, const glm::mat4& view) const;
   void draw_triangle(const Triangle& triangle, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const;
