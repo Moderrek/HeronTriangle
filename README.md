@@ -91,6 +91,7 @@ To learn more about Heron's formula, [click here](https://en.wikipedia.org/wiki/
 ## Features
 * Cross-platform support: Linux & Windows
 * Real-time rendering with OpenGL 3.3+
+* Vertex dragging
 * Lightweight and optimized for performance
 * MIT License: Open for contributions
 
