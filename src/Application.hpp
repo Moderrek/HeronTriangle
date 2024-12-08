@@ -16,7 +16,6 @@ namespace Heron {
   private:
     bool m_running = true;
     Window m_window;
-    Renderer m_renderer;
   };
 
 }

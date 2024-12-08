@@ -1,6 +1,8 @@
 #ifndef BASE_HPP_INCLUDED
 #define BASE_HPP_INCLUDED 1
 
+#include <memory>
+
 #ifdef HERON_DEBUG
 
   #if defined(HERON_PLATFORM_WINDOWS)
@@ -9,7 +11,7 @@
     #include <signal.h>
     #define HERON_DEBUGBREAK() raise(SIGTRAP)
   #else
-    #error "Platform doesn't have debug break support!"~
+    #error "Platform doesn't have debug break support!"
   #endif
 
 #else

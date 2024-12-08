@@ -123,8 +123,7 @@ int main() {
 
   {
     Triangle triangle(3.0f, 4.0f, 5.0f);
-    Renderer renderer;
-    renderer.init();
+    Heron::Renderer2D::Init();
     std::cout << "INFO: Initialized renderer\n";
 
     glm::vec2 window_size = {window_width, window_height};
@@ -241,16 +240,16 @@ int main() {
       glClearColor(background_color.x, background_color.y, background_color.z, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT);
 
-      renderer.set_color(grid_color);
-      renderer.draw_grid(camera.get_projection(), camera.get_view(), grid_model);
+      Heron::Renderer2D::SetColor(grid_color);
+      Heron::Renderer2D::DrawGrid(camera.get_projection(), camera.get_view(), grid_model);
 
-      renderer.set_color(triangle_color);
-      renderer.draw_triangle(triangle, camera.get_projection(), camera.get_view(), triangle_model);
+      Heron::Renderer2D::SetColor(triangle_color);
+      Heron::Renderer2D::DrawTriangle(triangle, camera.get_projection(), camera.get_view(), triangle_model);
 
       for (int i = 0; i < 3; ++i) {
         bool selected = dragging_vertex && i == selected_vertex;
-        renderer.set_color(selected ? triangle_vertex_selected_color : triangle_vertex_color);
-        renderer.draw_circle(triangle.get_vertices()[i], 0.15f, camera.get_projection(), camera.get_view());
+        Heron::Renderer2D::SetColor(selected ? triangle_vertex_selected_color : triangle_vertex_color);
+        Heron::Renderer2D::DrawCircle(triangle.get_vertices()[i], 0.15f, camera.get_projection(), camera.get_view());
       }
 
       ImGui_ImplOpenGL3_NewFrame();
@@ -355,6 +354,7 @@ int main() {
     } // end of game loop
 
     std::cout << "INFO: Cleaning up...\n";
+    Heron::Renderer2D::Shutdown();
   } // end of renderer
 
   // Cleanup

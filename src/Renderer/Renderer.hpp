@@ -6,52 +6,45 @@
 #include <string>
 
 #include "../Triangle.hpp"
+#include "Camera.hpp"
 
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 
-#define GLCall(x) Renderer::GLClearErrors();\
+#define GLCall(x) ::Heron::Renderer2D::GLClearErrors();\
 x;\
-ASSERT(Renderer::GLCheckError(#x, __FILE__, __LINE__))\
+ASSERT(::Heron::Renderer2D::GLCheckError(#x, __FILE__, __LINE__))\
 
+namespace Heron {
 
-class Renderer {
-public:
-  Renderer();
-  ~Renderer();
-  
-  void init();
-  void shutdown();
+  class Renderer2D {
+  public:
+    static void Init();
+    static void Shutdown();
 
-  void draw_grid(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const;
-  void draw_circle(const glm::vec2& position, float radius, const glm::mat4& projection, const glm::mat4& view) const;
-  void draw_triangle(const Triangle& triangle, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const;
-  
-  void update_triangle_buffer(const Triangle& triangle) const;
-  
-  void set_color(const glm::vec4& color) const;
-  
-  int get_uniform_location(const std::string& name) const;
-  
-  static void GLClearErrors();
-  static bool GLCheckError(const char* function, const char* file, int line);
-  
-private:
-  mutable std::unordered_map<std::string, int> uniform_cache;
+    static void BeginScene(const Camera2D& camera);
+    static void EndScene();
 
-  unsigned int gridVAO, gridVBO;
-  unsigned int triangleVAO, triangleVBO;
-  unsigned int circleVAO, circleVBO;
-  
-  unsigned int shaderProgram;
-  
-  mutable glm::vec4 last_color;
-  
-  void setup_grid();
-  void setup_triangle();
-  void setup_circle();
-  void load_shaders();
-};
+    static void SetColor(const glm::vec4& color);
+
+    // Drawing
+    static void DrawTriangle(const Triangle& triangle, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model);
+    
+    static void DrawGrid(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model);
+
+    static void DrawCircle(const glm::vec2& position, float radius, const glm::mat4& projection, const glm::mat4& view);
+
+    // Errors
+    static void GLClearErrors();
+    static bool GLCheckError(const char* function, const char* file, int line);
+  private:
+    static void GenerateGrid();
+    static void GenerateCircle(float radius, int segments);
+    static void GenerateTriangle();
+    static void UpdateTriangleBuffer(const Triangle& triangle);
+  };
+
+}
 
 float distance_squared(const glm::vec2& a, const glm::vec2& b);
 

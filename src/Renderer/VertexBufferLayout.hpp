@@ -5,6 +5,8 @@
 
 #include <vector>
 
+namespace Heron {
+
 struct VertexBufferElement {
   unsigned int type;
   unsigned int count;
@@ -45,5 +47,7 @@ private:
   std::vector<VertexBufferElement> m_elements;
   unsigned int m_stride;
 };
+
+}
 
 #endif // VERTEX_BUFFER_LAYOUT_HPP_INCLUDED

@@ -1,5 +1,7 @@
 ﻿#include "VertexBufferLayout.hpp"
 
+namespace Heron {
+
 template <>
 void VertexBufferLayout::push<float>(unsigned int count) {
   m_elements.push_back({GL_FLOAT, count, GL_FALSE});
@@ -16,4 +18,6 @@ template <>
 void VertexBufferLayout::push<unsigned char>(unsigned int count) {
   m_elements.push_back({GL_UNSIGNED_BYTE, count, GL_TRUE});
   m_stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE);
+}
+
 }

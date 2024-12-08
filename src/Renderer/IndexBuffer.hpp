@@ -9,6 +9,8 @@ public:
   void bind() const;
   void unbind() const;
 
+  void remove();
+
   inline unsigned int get_count() const { return m_count; }
   
 private:

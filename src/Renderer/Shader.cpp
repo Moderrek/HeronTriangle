@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 
+namespace Heron {
+
 ShaderProgramSource Shader::parse_shader(const std::string& filepath) {
   std::ifstream stream{ filepath };
 
@@ -56,7 +58,7 @@ Shader::Shader(const std::string& name, const std::string& vertexSrc, const std:
 }
 
 Shader::~Shader() {
-  GLCall(glDeleteProgram(m_renderer_id));
+  remove();
 }
 
 void Shader::bind() const {
@@ -65,6 +67,13 @@ GLCall(glUseProgram(m_renderer_id));
 
 void Shader::unbind() const {
 GLCall(glUseProgram(0));
+}
+
+void Shader::remove() {
+  if (m_renderer_id != 0) {
+    GLCall(glDeleteProgram(m_renderer_id));
+    m_renderer_id = 0;
+  }
 }
 
 void Shader::set_uniform_1i(const std::string& name, int v0) const {
@@ -109,9 +118,10 @@ unsigned int Shader::compile_shader(unsigned int type, const std::string& source
 unsigned int Shader::create_shader(const std::string& vertex, const std::string& fragment) {
   GLCall(const unsigned int program = glCreateProgram());
   const unsigned int vs = compile_shader(GL_VERTEX_SHADER, vertex);
-  //assert(vs != 0);
+  ASSERT(vs != 0);
   const unsigned int fs = compile_shader(GL_FRAGMENT_SHADER, fragment);
-  //assert(fs != 0);
+  ASSERT(fs != 0);
+
   GLCall(glAttachShader(program, vs));
   GLCall(glAttachShader(program, fs));
   GLCall(glLinkProgram(program));
@@ -130,4 +140,6 @@ int Shader::get_uniform_location(const std::string& name) const {
     std::cout << "[Shader] " << m_filepath << " Warning: cannot find uniform " << name << '\n';
   m_uniform_location_cache[name] = location;
   return location;
+}
+
 }

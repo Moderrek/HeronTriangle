@@ -1,5 +1,5 @@
 ﻿#include "Triangle.hpp"
-#include "Renderer.hpp"
+#include "Renderer/Renderer.hpp"
 
 Triangle::Triangle(const float a, const float b, const float c) : a(a), b(b), c(c), needs_update(true) {
   vertices.resize(3);
@@ -62,7 +62,9 @@ void Triangle::update_sides() {
 }
 
 void Triangle::update_area() {
-  const float circumference = sides[0] + sides[1] + sides[2];
-  const float s = circumference / 2;
-  area = sqrt(s * (s - sides[0]) * (s - sides[1]) * (s - sides[2]));
+  area = 0.5f * std::abs(
+    vertices[0].x * (vertices[1].y - vertices[2].y)
+    + vertices[1].x * (vertices[2].y - vertices[0].y)
+    + vertices[2].x * (vertices[0].y - vertices[1].y)
+  );
 }
