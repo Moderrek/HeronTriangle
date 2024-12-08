@@ -10,6 +10,7 @@ Makefile
 x64/
 HeronTriangle.dir/
 test_fs_support_case_sensitivity
+test_fs_support_CASE_sensitivity
 
 # Visual Studio artifacts
 *.suo

@@ -69,9 +69,11 @@ void Camera::process_inputs(GLFWwindow* window, const float delta_time) {
 
 void Camera::scroll_callback(GLFWwindow* window, double x_offset, const double y_offset) {
   if (!g_camera) return;
+  if (y_offset == 0) return;
   g_camera->m_zoom -= 0.1f * y_offset;
   g_camera->m_zoom = std::max(g_camera->m_zoom, 0.1f);
   g_camera->m_zoom = std::min(g_camera->m_zoom, 10.0f);
+  g_camera->update_matrix(g_camera->m_last_window_size);
 }
 
 void Camera::setup_scroll(GLFWwindow* window) {

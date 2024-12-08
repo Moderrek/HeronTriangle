@@ -1,13 +1,23 @@
 ﻿#pragma once
 
+#include "platform.hpp"
+
 #include <string>
 
 #include "Triangle.h"
 
 #include <glm/glm.hpp>
-#include <gl/glew.h>
+#include <GL/glew.h>
+
+#ifdef PLATFORM_WINDOWS
 
 #define ASSERT(x) if (!(x)) __debugbreak()
+
+#else
+
+#define ASSERT(x) 
+
+#endif
 
 #define GLCall(x) Renderer::GLClearErrors();\
 x;\

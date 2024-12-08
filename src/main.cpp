@@ -7,8 +7,8 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include "triangle.h"
-#include "renderer.h"
+#include "Triangle.h"
+#include "Renderer.h"
 #include "scoped_timer.h"
 #include "style.h"
 #include <chrono>
@@ -155,8 +155,9 @@ int main() {
 
   glfwMakeContextCurrent(window);
 
-  if (glewInit() != GLEW_OK) {
-    std::cerr << "FATAL: Failed to initialize GLEW\n";
+  GLenum err = glewInit();
+  if (err != GLEW_OK) {
+    std::cerr << "FATAL: Failed to initialize GLEW: " << glewGetErrorString(err) << "\n";
     return -1;
   }
   std::cout << "INFO: Initialized GLEW and OpenGL\n";
