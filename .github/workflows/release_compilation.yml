@@ -1,11 +1,8 @@
 name: Build and Release
 
 on:
-  push:
-    tags:
-      - 'v*'
-    branches:
-      - main
+  release:
+    types: [published]
 
 env:
   BUILD_TYPE: Release
@@ -72,20 +69,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install jq
+        run: sudo apt-get install -y jq
+    
       - name: Download Linux artifacts
         uses: actions/download-artifact@v3
         with:
           name: HeronTriangle-Linux
-          path: ./linux
+          path: ./artifacts/linux
+          
       - name: Download Windows artifacts
         uses: actions/download-artifact@v3
         with:
           name: HeronTriangle-Windows
-          path: ./windows
+          path: ./artifacts/windows
+          
+      - name: Attach Artifacts to Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          release_id=$(curl -s \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.id')
+          echo "Release ID: $release_id"
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            linux/HeronTriangle-Linux.zip
-            windows/HeronTriangle-Windows.zip
+          for file in ./artifacts/linux/* ./artifacts/windows/*; do
+            filename=$(basename "$file")
+            echo "Uploading $filename to release $release_id"
+            curl -X POST \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Content-Type: application/zip" \
+              --data-binary @"$file" \
+              "https://uploads.github.com/repos/${{ github.repository }}/releases/$release_id/assets?name=$filename"
+          done
