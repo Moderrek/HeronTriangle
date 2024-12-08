@@ -5,5 +5,6 @@ cd ..
 if [ ! -d "CMakeFiles" ]; then
     ./scripts/linux_setup_project.sh
 fi
+cmake -DCMAKE_BUILD_TYPE=Debug .
 cmake --build . --config Debug
 echo "Completed building in Debug mode."

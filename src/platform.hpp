@@ -3,11 +3,11 @@
 
 #ifdef __linux__
 
-#define PLATFORM_LINUX 1
+#define HERON_PLATFORM_UNIX 1
 
 #elif _WIN32
 
-#define PLATFORM_WINDOWS 1
+#define HERON_PLATFORM_WINDOWS 1
 
 #else
 

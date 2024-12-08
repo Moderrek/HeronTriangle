@@ -12,6 +12,38 @@ if (MINGW)
 endif ()
 
 
+if (WIN32)
+    message(STATUS "Detected Windows")
+    add_compile_definitions(HERON_PLATFORM_WINDOWS)
+    add_compile_definitions(HERON_PLATFORM_NAME="Windows")
+elseif (LINUX)
+    message(STATUS "Detected Linux")
+    add_compile_definitions(HERON_PLATFORM_LINUX)
+    add_compile_definitions(HERON_PLATFORM_NAME="Linux")
+endif ()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    message(STATUS "Configuring for Release mode")
+    add_compile_definitions(HERON_RELEASE)
+    add_compile_definitions(NDEBUG)
+    add_compile_definitions(HERON_MODE="Release")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Configuring for Debug mode")
+    add_compile_definitions(HERON_DEBUG)
+    add_compile_definitions(HERON_MODE="Debug")
+else()
+    message(WARNING "Unknown build type: ${CMAKE_BUILD_TYPE}")
+    add_compile_definitions(HERON_MODE="Debug")
+    add_compile_definitions(HERON_DEBUG)
+endif()
+
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
+
+
+
+
 # Set the directory for intermediate and build files
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/bin)     # Executables
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/lib)    # Shared libraries

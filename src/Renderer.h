@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 
-#ifdef PLATFORM_WINDOWS
+#ifdef HERON_PLATFORM_WINDOWS
 
 #define ASSERT(x) if (!(x)) __debugbreak()
 

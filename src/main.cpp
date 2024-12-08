@@ -64,7 +64,7 @@ void limit_fps(int target_fps, bool unlock) {
     last_frame_time = std::chrono::high_resolution_clock::now();
   }
   else {
-    last_frame_time = std::chrono::high_resolution_clock::now(); // Reset bez limitu
+    last_frame_time = std::chrono::high_resolution_clock::now();
   }
 }
 
@@ -118,21 +118,10 @@ void framebuffer_size_callback(GLFWwindow* window, const int width, const int he
   glViewport(0, 0, window_width, window_height);
 }
 
-// void scroll_callback(GLFWwindow* window, [[maybe_unused]] double x_offset, const double y_offset) {
-//   zoom -= y_offset * 0.1f;
-//   zoom = std::max(zoom, 0.1f);
-//   zoom = std::min(zoom, 10.0f);
-// }
-//
-// void process_input(GLFWwindow* window) {
-//   const float move_speed = 0.05f * zoom;
-//   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera_pos.y += move_speed;
-//   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera_pos.y -= move_speed;
-//   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera_pos.x -= move_speed;
-//   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera_pos.x += move_speed;
-// }
-
 int main() {
+  std::cout << "HeronTriangle v1.0.1 created by Tymon Wozniak (https://github.com/Moderrek)\nRunning on " 
+    << HERON_PLATFORM_NAME << '-' << HERON_MODE << '\n';
+
   if (!glfwInit()) {
     std::cerr << "FATAL: Failed to initialize GLFW\n";
     return -1;
@@ -432,3 +421,11 @@ int main() {
   std::cout << "INFO: Successfully cleaned up\n";
   return EXIT_SUCCESS;
 }
+
+#ifdef HERON_RELEASE
+
+#ifdef HERON_PLATFORM_WINDOWS
+#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+#endif
+
+#endif
