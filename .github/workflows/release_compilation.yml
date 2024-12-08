@@ -22,10 +22,10 @@ jobs:
       run: git submodule update --init --recursive
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libwayland-dev wayland-protocols
+      run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libwayland-dev wayland-protocols libxkbcommon-dev
 
     - name: Configure CMake project
-      run: cmake -B . -S .
+      run: cmake -B . -S . -DGLFW_USE_WAYLAND=OFF
       
     - name: Build for Linux
       run: cmake --build . --config ${{env.BUILD_TYPE}}
