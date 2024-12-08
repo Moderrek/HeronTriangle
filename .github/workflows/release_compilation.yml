@@ -23,9 +23,12 @@ jobs:
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libwayland-dev wayland-protocols libxkbcommon-dev
+    
+    - name: Clear CMake Cache
+      run: rm -rf build/*
 
     - name: Configure CMake project
-      run: cmake -B . -S . -DGLFW_USE_WAYLAND=OFF
+      run: cmake -B . -S . -DGLFW_BUILD_WAYLAND=OFF -DGLFW_BUILD_X11=ON
       
     - name: Build for Linux
       run: cmake --build . --config ${{env.BUILD_TYPE}}
