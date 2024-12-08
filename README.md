@@ -5,8 +5,76 @@
 ![OpenGL](https://img.shields.io/badge/Graphics-OpenGL-green?logo=opengl)
 ![MIT License](https://img.shields.io/badge/License-MIT-yellow?logo=opensourceinitiative)
 
+Heron's Formula is a method for calculating the **area** of a triangle when the lengths of all three sides are known. This formula is attributed to **Heron of Alexandria**.
 
-![image](https://github.com/user-attachments/assets/47fd1bd0-f616-455a-8e7c-dd6056ac430c)
+[**Download Heron Triangle Visualizer (Linux, Windows) HERE**](https://github.com/Moderrek/HeronTriangle/releases)
+
+![image](https://github.com/user-attachments/assets/98017984-4fcb-499d-aae1-badc98fa7711)
+
+---
+
+## Formula Overview
+
+Given the three side lengths of a triangle:
+
+- ***`a`*** = first side
+- ***`b`*** = second side
+- ***`c`*** = third side
+
+### Step 1: Calculate the Semi-Perimeter ***`s`***
+
+The semi-perimeter is half the perimeter of the triangle and is calculated as:
+
+```math
+s = \frac{a + b + c}{2}
+```
+
+### Step 2: Calculate the Area ***`A`***
+
+The area of the triangle is determined using the following formula:
+
+```math
+A = \sqrt{s(s - a)(s - b)(s - c)}
+```
+
+---
+
+## Example
+
+### Input:
+Let the sides of the triangle be:
+
+- `a = 5`
+- `b = 6`
+- `c = 7`
+
+### Calculation:
+1. Compute the semi-perimeter:
+   ```math
+   s = \frac{5 + 6 + 7}{2} = 9
+   ```
+
+2. Compute the area:
+   ```math
+   A = \sqrt{9(9 - 5)(9 - 6)(9 - 7)}
+   ```
+   ```math
+   A = \sqrt{9 \cdot 4 \cdot 3 \cdot 2} = \sqrt{216} \approx 14.7
+   ```
+
+### Output:
+The area of the triangle is approximately **14.7 square units**.
+
+---
+
+## Applications
+
+- Geometry and trigonometry problems
+- Engineering and architecture
+- Computational graphics and simulations
+- Heron's Formula works for any triangle, as long as the sum of any two sides is greater than the third side (triangle inequality).
+
+To learn more about Heron's formula, [click here](https://en.wikipedia.org/wiki/Heron%27s_formula).
 
 ## Table of Contents
 - [Heron Triangle](#heron-triangle)
