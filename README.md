@@ -19,14 +19,25 @@
    ```
 
 3. Configure the project using **CMake**:
+   For **Windows**
    ```bash
-   cmake -S . -B .
+   ./scripts/windows_setup_project.bat
+   ```
+   For **Linux**
+   ```bash
+   ./scripts/linux_setup_project.sh
    ```
 
 4. Build the project:
+      For **Windows**
    ```bash
-   cmake --build . --config Debug
+   ./scripts/windows_build_debug.bat
+   ```
+   For **Linux**
+   ```bash
+   ./scripts/linux_build_debug.sh
    ```
 
 5. Run the game:
    * On **Windows**: Open executable in the `build/bin` or `build/bin` directory.
+   * On **Linux**: Run executable `./build/bin/HeronTriangle`.
