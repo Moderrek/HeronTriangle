@@ -18,6 +18,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Initialize and update submodules
+      run: git submodule update --init --recursive
+
     - name: Configure CMake project
       run: cmake -B . -S .
       
@@ -40,6 +43,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Initialize and update submodules
+      run: git submodule update --init --recursive
+      
     - name: Configure CMake project
       run: cmake -B . -S .
 
