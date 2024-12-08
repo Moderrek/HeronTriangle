@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - main
+
+env:
+  BUILD_TYPE: Release
 
 jobs:
   build-linux:
@@ -11,48 +16,44 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: Set up CMake
-      uses: actions/setup-cmake@v3
-
+    - name: Configure CMake project
+      run: cmake -B . -S .
+      
     - name: Build for Linux
-      run: |
-        mkdir build
-        cd build
-        cmake ..
-        cmake --build .
-        zip -r HeronTriangle-Linux.zip bin/
+      run: cmake --build . --config ${{env.BUILD_TYPE}}
+
+    - name: Package binaries
+      run: zip -r HeronTriangle-Linux.zip ./build/bin/
 
     - name: Upload Linux Release
       uses: actions/upload-artifact@v3
       with:
         name: HeronTriangle-Linux
-        path: build/HeronTriangle-Linux.zip
+        path: HeronTriangle-Linux.zip
 
   build-windows:
     runs-on: windows-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: Set up CMake
-      uses: actions/setup-cmake@v3
+    - name: Configure CMake project
+      run: cmake -B . -S .
 
     - name: Build for Windows
-      run: |
-        mkdir build
-        cd build
-        cmake ..
-        cmake --build .
-        powershell -Command "Compress-Archive -Path bin\* -DestinationPath HeronTriangle-Windows.zip"
+      run: cmake --build . --config ${{env.BUILD_TYPE}}
+
+    - name: Package binaries
+      run: powershell -Command "Compress-Archive -Path build\bin\* -DestinationPath HeronTriangle-Windows.zip"
 
     - name: Upload Windows Release
       uses: actions/upload-artifact@v3
       with:
         name: HeronTriangle-Windows
-        path: build/HeronTriangle-Windows.zip
+        path: HeronTriangle-Windows.zip
 
   release:
     needs: [build-linux, build-windows]
