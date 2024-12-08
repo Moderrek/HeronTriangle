@@ -34,7 +34,7 @@ jobs:
       run: cmake --build . --config ${{env.BUILD_TYPE}}
 
     - name: Package binaries
-      run: zip -r HeronTriangle-Linux.zip ./build/bin/
+      run: cd build/bin && zip -r ../../HeronTriangle-Linux.zip . && cd ../../
 
     - name: Upload Linux Release
       uses: actions/upload-artifact@v3
