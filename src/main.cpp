@@ -7,44 +7,23 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include "Triangle.h"
-#include "Renderer.h"
-#include "scoped_timer.h"
-#include "style.h"
+#include "Triangle.hpp"
+#include "Renderer.hpp"
+#include "ScopedTimer.hpp"
+#include "ImGuiStyle.hpp"
 #include <chrono>
 #include <thread>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "Camera.h"
-#include "heron.h"
-#include "saves.h"
-#include "stb_image_write.h"
-
-void save_framebuffer_to_image(const char* filename, int width, int height) {
-  std::vector<unsigned char> pixels(width * height * 3);
-
-  glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
-
-  std::vector<unsigned char> flippedPixels(width * height * 3);
-  for (int y = 0; y < height; ++y) {
-    memcpy(&flippedPixels[y * width * 3],
-           &pixels[(height - 1 - y) * width * 3],
-           width * 3);
-  }
-
-  stbi_write_png(filename, width, height, 3, flippedPixels.data(), width * 3);
-}
+#include "Camera.hpp"
+#include "HeronPanel.hpp"
+#include "Saves.hpp"
+#include "Screenshot.hpp"
 
 const int TARGET_FPS = 60;
 const int FRAME_TIME = 1000 / TARGET_FPS;
 
 constexpr float grid_size = 1.0f;
 constexpr float snap_threshold = 0.2f;
-
-float distance_squared(const glm::vec2& a, const glm::vec2& b) {
-  const glm::vec2 diff = a - b;
-  return diff.x * diff.x + diff.y * diff.y;
-}
 
 int max_fps = 60;
 bool unlock_fps = true;
@@ -209,6 +188,7 @@ int main() {
   
       camera.process_inputs(window, delta_time);
 
+      // Calculate mouse position
       double mouse_x, mouse_y;
       glfwGetCursorPos(window, &mouse_x, &mouse_y);
       glm::vec2 mouse_pos = {mouse_x, mouse_y};
@@ -216,7 +196,7 @@ int main() {
 
       const float aspect_ratio = static_cast<float>(window_width) / static_cast<float>(window_height);
 
-
+      // VSync toggler
       if (want_vsync && !is_vsync) {
         std::cout << "INFO: Enabled V-Sync\n";
         glfwSwapInterval(1);
@@ -327,19 +307,19 @@ int main() {
       }
 
       if (save_screenshot) {
-        save_framebuffer_to_image("screenshot.png", window_width, window_height);
+        Screenshot::save("screenshot.png", window_width, window_height);
         save_screenshot = false;
         std::cout << "INFO: Saved screenshot as screenshot.png\n";
       }
 
       if (save_scene) {
-        save_scene_to_file("scene.json", triangle, triangle_color);
+        Saves::save_to_file("scene.json", triangle, triangle_color);
         save_scene = false;
         std::cout << "INFO: Saved scene to scene.json\n";
       }
 
       if (load_scene) {
-        load_scene_from_file("scene.json", triangle, triangle_color);
+        Saves::load_from_file("scene.json", &triangle, &triangle_color);
         load_scene = false;
         std::cout << "INFO: Loaded scene from scene.json\n";
       }

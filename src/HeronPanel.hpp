@@ -1,6 +1,7 @@
-﻿#pragma once
+﻿#ifndef HERON_PANEL_HPP_INCLUDED
+#define HERON_PANEL_HPP_INCLUDED 1
 
-#include <cmath>
+#include <math.h>
 #include <imgui.h>
 
 struct HeronSteps {
@@ -65,3 +66,5 @@ void render_heron_steps_panel(HeronSteps& heron_steps) {
 
   ImGui::End();
 }
+
+#endif // HERON_PANEL_HPP_INCLUDED

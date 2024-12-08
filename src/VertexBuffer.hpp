@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef VERTEX_BUFFER_HPP_INCLUDED
+#define VERTEX_BUFFER_HPP_INCLUDED 1
 
 class VertexBuffer {
 public:
@@ -11,3 +12,5 @@ public:
 private:
   unsigned int m_renderer_id;
 };
+
+#endif // VERTEX_BUFFER_HPP_INCLUDED

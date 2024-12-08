@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 
-#include "Renderer.h"
+#include "Renderer.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -217,4 +217,9 @@ bool Renderer::GLCheckError(const char* function, const char* file, int line) {
     return false;
   }
   return true;
+}
+
+float distance_squared(const glm::vec2& a, const glm::vec2& b) {
+  const glm::vec2 diff = a - b;
+  return diff.x * diff.x + diff.y * diff.y;
 }

@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef SHADER_HPP_INCLUDED
+#define SHADER_HPP_INCLUDED 1
 
 #include <string>
 #include <unordered_map>
@@ -38,3 +39,5 @@ private:
   
   int get_uniform_location(const std::string& name) const;
 };
+
+#endif // SHADER_HPP_INCLUDED

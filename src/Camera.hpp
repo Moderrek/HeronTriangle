@@ -1,7 +1,9 @@
-﻿#pragma once
+﻿#ifndef CAMERA_HPP_INCLUDED
+#define CAMERA_HPP_INCLUDED 1
+
 #include <imgui_impl_glfw.h>
 
-#include "Shader.h"
+#include "Shader.hpp"
 #include "glm/vec2.hpp"
 
 class Camera {
@@ -33,3 +35,5 @@ private:
   glm::vec2 m_last_window_size;
     
 };
+
+#endif // CAMERA_HPP_INCLUDED

@@ -1,11 +1,9 @@
-﻿#pragma once
+#include "Saves.hpp"
 
-#include <nlohmann/json.hpp>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
-#include "Triangle.h"
-
-void save_scene_to_file(const std::string& filename, const Triangle& triangle, const glm::vec4& triangle_color) {
+void Saves::save_to_file(const std::string& filename, const Triangle& triangle, const glm::vec4& triangle_color) {
   nlohmann::json scene;
 
   scene["triangle"]["vertices"] = {
@@ -20,18 +18,22 @@ void save_scene_to_file(const std::string& filename, const Triangle& triangle, c
   file << scene.dump(2);
 }
 
-void load_scene_from_file(const std::string& filename, Triangle& triangle, glm::vec4& triangle_color) {
+
+
+void Saves::load_from_file(const std::string& filename, Triangle* triangle, glm::vec4* triangle_color) {
   std::ifstream file(filename);
   nlohmann::json scene;
   file >> scene;
 
+  // Load triangle verticies position
   auto vertices = scene["triangle"]["vertices"];
-  triangle.set_vertices({
+  triangle->set_vertices({
       glm::vec2(vertices[0][0], vertices[0][1]),
       glm::vec2(vertices[1][0], vertices[1][1]),
       glm::vec2(vertices[2][0], vertices[2][1])
   });
 
+  // Load triangle color
   auto color = scene["triangle"]["color"];
-  triangle_color = glm::vec4(color[0], color[1], color[2], color[3]);
+  *triangle_color = glm::vec4(color[0], color[1], color[2], color[3]);
 }

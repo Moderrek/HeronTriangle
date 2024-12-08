@@ -1,6 +1,5 @@
-﻿#include "Triangle.h"
-
-#include "Renderer.h"
+﻿#include "Triangle.hpp"
+#include "Renderer.hpp"
 
 Triangle::Triangle(const float a, const float b, const float c) : a(a), b(b), c(c), needs_update(true) {
   vertices.resize(3);

@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef TRIANGLE_HPP_INCLUDED
+#define TRIANGLE_HPP_INCLUDED 1
 
 #include <glm/glm.hpp>
 
@@ -30,3 +31,5 @@ private:
   void update_sides();  
   void update_area();
 };
+
+#endif // TRIANGLE_HPP_INCLUDED

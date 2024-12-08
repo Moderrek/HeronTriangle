@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef VERTEX_BUFFER_LAYOUT_HPP_INCLUDED
+#define VERTEX_BUFFER_LAYOUT_HPP_INCLUDED 1
 
 #include <GL/glew.h>
 
@@ -44,3 +45,5 @@ private:
   std::vector<VertexBufferElement> m_elements;
   unsigned int m_stride;
 };
+
+#endif // VERTEX_BUFFER_LAYOUT_HPP_INCLUDED

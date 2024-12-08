@@ -1,10 +1,9 @@
-﻿#pragma once
-
-#include "platform.hpp"
+﻿#ifndef RENDERER_HPP_INCLUDED
+#define RENDERER_HPP_INCLUDED 1
 
 #include <string>
 
-#include "Triangle.h"
+#include "Triangle.hpp"
 
 #include <glm/glm.hpp>
 #include <GL/glew.h>
@@ -59,3 +58,7 @@ private:
   void setup_circle();
   void load_shaders();
 };
+
+float distance_squared(const glm::vec2& a, const glm::vec2& b);
+
+#endif // RENDERER_HPP_INCLUDED

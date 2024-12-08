@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef HG_SCOPED_TIMER_HPP_INCLUDED
+#define HG_SCOPED_TIMER_HPP_INCLUDED 1
 
 /*
 * Scoped Timer 
@@ -76,3 +77,5 @@ long long ScopedTimer::stop() {
   m_stopped = true;
   return diff;
 }
+
+#endif // HG_SCOPED_TIMER_HPP_INCLUDED

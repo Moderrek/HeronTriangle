@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef INDEX_BUFFER_HPP_INCLUDED
+#define INDEX_BUFFER_HPP_INCLUDED 1
 
 class IndexBuffer {
 public:
@@ -14,3 +15,5 @@ private:
     unsigned int m_renderer_id;
     unsigned int m_count;
 };
+
+#endif // INDEX_BUFFER_HPP_INCLUDED
