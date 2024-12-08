@@ -3,7 +3,7 @@
 
 #ifdef __linux__
 
-#define HERON_PLATFORM_UNIX 1
+#define HERON_PLATFORM_LINUX 1
 
 #elif _WIN32
 
